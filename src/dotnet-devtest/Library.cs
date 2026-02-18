@@ -1,10 +1,11 @@
 namespace DotNetDevtest;
 
+using DotNetDevtest.Models;
 using DotNetDevtest.Pipeline;
 using DotNetDevtest.Services;
 
 /// <summary>
-/// Entry point for the dotnet-devtest library. Use this to obtain a report pipeline for use in your application.
+/// Entry point for the dotnet-devtest library. Use this to obtain a report pipeline and run operations that require a pipeline.
 /// </summary>
 public static class Library
 {
@@ -27,5 +28,16 @@ public static class Library
     public static IReportPipeline CreatePipeline(IReportFinalizer finalizer)
     {
         return new ReportPipeline(new InputValidator(), new EntryMapper(), finalizer);
+    }
+
+    /// <summary>
+    /// Runs the given pipeline and returns only the first report entry, if any.
+    /// </summary>
+    /// <param name="pipeline">The report pipeline to run.</param>
+    /// <param name="inputs">The pipeline inputs to process.</param>
+    /// <returns>The first report entry, or null if the pipeline yields no entries.</returns>
+    public static ReportEntry? GetFirstEntry(IReportPipeline pipeline, IEnumerable<PipelineInput> inputs)
+    {
+        return pipeline.Run(inputs).FirstOrDefault();
     }
 }
